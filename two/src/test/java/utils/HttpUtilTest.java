@@ -12,4 +12,10 @@ public class HttpUtilTest {
         JSONObject jsonObject = JSONObject.parseObject(content);
         System.out.println(jsonObject.toJSONString());
     }
+    @Test
+    public void test8801(){
+        HttpResult httpResult = HttpUtil.get("http://localhost:8801");
+        String content = httpResult.getContent();
+        System.out.println(content);
+    }
 }
