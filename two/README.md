@@ -215,6 +215,30 @@ Heap
 
 2.使用压测工具（wrk 或 sb），演练 gateway-server-0.0.1-SNAPSHOT.jar 示例。
 
+sb -u http://localhost:8088/api/hello -n 1000 -c 10
+
+Starting at 2021/5/7 22:08:19
+[Press C to stop the test]
+998     (RPS: 915.6)
+---------------Finished!----------------
+Finished at 2021/5/7 22:08:20 (took 00:00:01.3497172)
+Status 200:    1000
+
+RPS: 443.1 (requests/second)
+Max: 93ms
+Min: 0ms
+Avg: 1.8ms
+
+  50%   below 1ms
+  60%   below 1ms
+  70%   below 1ms
+  80%   below 1ms
+  90%   below 2ms
+  95%   below 3ms
+  98%   below 6ms
+  99%   below 74ms
+99.9%   below 93ms
+
 3.（选做） 如果自己本地有可以运行的项目，可以按照 2 的方式进行演练。
 
 直接用HttpServer01、HttpServer02、HttpServer03来测试：
