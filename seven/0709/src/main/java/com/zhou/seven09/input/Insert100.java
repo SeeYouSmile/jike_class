@@ -4,6 +4,8 @@ import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.pool.HikariPool;
 
 import java.sql.SQLException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Insert100 {
@@ -25,6 +27,8 @@ public class Insert100 {
         hikariConfig.setPassword(password);
         hikariConfig.setMaximumPoolSize(total/ever);
         HikariPool hikariPool = new HikariPool(hikariConfig);
+
+        ExecutorService service = Executors.newFixedThreadPool(32);
 
         final String sql="insert into user (user_id,username,password,nikename,createtime,updatetime) values ";
 
@@ -48,7 +52,7 @@ public class Insert100 {
                     System.out.println("finish-->"+n);
                     if(n==total/ever){
                         long end=System.currentTimeMillis();
-                        System.out.println((end-start)/1000+" seconds");
+                        System.out.println((end-start)+" ms");
                         System.exit(0);
                     }
                 } catch (SQLException e) {
@@ -56,7 +60,7 @@ public class Insert100 {
                     System.exit(1);
                 }
             };
-            runnable.run();
+            service.submit(runnable);
         }
     }
 
