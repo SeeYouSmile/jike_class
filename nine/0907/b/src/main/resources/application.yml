@@ -1,0 +1,27 @@
+server:
+  port: 8092
+  servlet:
+    context-path: /
+  address: 0.0.0.0
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/db_1
+    username: root
+    password:
+org:
+  dromara:
+    hmily :
+      serializer : kryo
+      recoverDelayTime : 128
+      retryMax : 30
+      scheduledDelay : 128
+      scheduledThreadMax :  10
+      repositorySupport : db
+      started: true
+      async-threads: 32
+      hmilyDbConfig :
+        driverClassName  : com.mysql.cj.jdbc.Driver
+        url :  jdbc:mysql://127.0.0.1:3306/tcc?useUnicode=true&amp;characterEncoding=utf8
+        username : root
+        password :
