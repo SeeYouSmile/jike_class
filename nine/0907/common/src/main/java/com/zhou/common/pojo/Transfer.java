@@ -7,17 +7,15 @@ import java.io.Serializable;
 @Data
 public class Transfer implements Serializable {
     private Integer id;
-    private String transferId;
-    private String userIdFrom;
-    private String userIdTo;
-    private Float money;
-    private String type;
+    private String transfer_id;
+    private String user_id_from;
+    private String user_id_to;
+    private Float money_from;
+    private Float money_to;
+    private String type_from;
+    private String type_to;
     private String status;
-    private Long createTime;
-    public class CurrentType{//币种
-        public static final String CNY="cny";//人民币
-        public static final String USD="usd";//美元
-    }
+    private Long create_time;
     public class TransferStatus{//交易状态
         public static final String PROCESSING="processing";//交易中
         public static final String SUCCESS="success";//成功

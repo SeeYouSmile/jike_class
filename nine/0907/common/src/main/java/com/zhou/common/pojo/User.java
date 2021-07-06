@@ -10,6 +10,4 @@ public class User implements Serializable {
     private String user_id;
     private Float cny;
     private Float usd;
-    private Float freeze_cny;
-    private Float freeze_usd;
 }

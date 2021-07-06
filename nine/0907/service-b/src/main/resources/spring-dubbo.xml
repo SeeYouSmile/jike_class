@@ -16,11 +16,17 @@
     <dubbo:service interface="com.zhou.common.service.UserB2AService"
                    ref="userService-b" executes="20"/>
 
+    <dubbo:service interface="com.zhou.common.service.FreezeB2AService"
+                   ref="freeze-b" executes="20"/>
+
     <dubbo:reference timeout="20000"
                      interface="com.zhou.common.service.UserA2BService"
                      id="userService-a"
                      retries="0" check="false" loadbalance="hmilyRandom"/>
 
-
+    <dubbo:reference timeout="20000"
+                     interface="com.zhou.common.service.FreezeA2BService"
+                     id="freeze-a"
+                     retries="0" check="false" loadbalance="hmilyRandom"/>
 
 </beans>
