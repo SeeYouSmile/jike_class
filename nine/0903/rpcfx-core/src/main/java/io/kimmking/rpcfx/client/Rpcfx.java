@@ -7,6 +7,9 @@ import io.kimmking.rpcfx.api.*;
 import io.kimmking.rpcfx.exception.RpcfxException;
 import io.kimmking.rpcfx.pojo.MyHttpResult;
 import io.kimmking.rpcfx.utils.MyHttpUtils;
+import net.sf.cglib.proxy.Enhancer;
+import net.sf.cglib.proxy.MethodInterceptor;
+import net.sf.cglib.proxy.MethodProxy;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -45,8 +48,59 @@ public final class Rpcfx {
     public static <T> T create(final Class<T> serviceClass, final String url, Filter... filters) {
 
         // 0. 替换动态代理 -> AOP
-        return (T) Proxy.newProxyInstance(Rpcfx.class.getClassLoader(), new Class[]{serviceClass}, new RpcfxInvocationHandler(serviceClass, url, filters));
+        //使用cglib字节码技术
+        Enhancer enhancer = new Enhancer();
+        enhancer.setSuperclass(Rpcfx.class);
+        enhancer.setCallback(new RpcMethodInterceptor(serviceClass,url,filters));
+        return (T) enhancer.create();
+//        return (T) Proxy.newProxyInstance(Rpcfx.class.getClassLoader(), new Class[]{serviceClass}, new RpcfxInvocationHandler(serviceClass, url, filters));
 
+    }
+
+    public static class RpcMethodInterceptor implements MethodInterceptor{
+
+        private final Class<?> serviceClass;
+        private final String url;
+        private final Filter[] filters;
+
+        public <T> RpcMethodInterceptor(Class<T> serviceClass, String url, Filter... filters){
+            this.serviceClass = serviceClass;
+            this.url = url;
+            this.filters = filters;
+        }
+
+        @Override
+        public Object intercept(Object o, Method method, Object[] objects, MethodProxy methodProxy) throws Throwable {
+            RpcfxRequest request = new RpcfxRequest();
+            request.setServiceClass(this.serviceClass.getName());
+            request.setMethod(method.getName());
+            request.setParams(objects);
+
+            if (null!=filters) {
+                for (Filter filter : filters) {
+                    if (!filter.filter(request)) {
+                        return null;
+                    }
+                }
+            }
+
+            RpcfxResponse response = post(request, url);
+            if(!response.isStatus()){
+                throw new RpcfxException(response.getException().getMessage());
+            }
+
+            return JSON.parse(response.getResult().toString());
+        }
+
+        private RpcfxResponse post(RpcfxRequest req, String url){
+            String reqJson = JSON.toJSONString(req);
+            System.out.println("req json: "+reqJson);
+
+            MyHttpResult myHttpResult = MyHttpUtils.postJson(url, null, reqJson);
+            String content = myHttpResult.getContent();
+            System.out.println("resp json: "+content);
+            return JSON.parseObject(content,RpcfxResponse.class);
+        }
     }
 
     public static class RpcfxInvocationHandler implements InvocationHandler {
